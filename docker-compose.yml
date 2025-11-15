@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: asir_n8n
+    restart: unless-stopped
+    user: "0:0"  # Run as root to read the certificates
+    environment:
+      - N8N_PORT=8080
+      - N8N_PROTOCOL=https
+      - N8N_SSL_KEY=/home/node/ssl/n8n.key
+      - N8N_SSL_CERT=/home/node/ssl/n8n.crt
+      - N8N_HOST=${N8N_HOST}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - WEBHOOK_URL=https://${N8N_HOST}/
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+    ports:
+      - "8080:8080"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./ssl:/home/node/ssl:ro
+
+volumes:
+  n8n_data:
