@@ -1,0 +1,132 @@
+{
+  "name": "Text Fixer",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -368,
+        -48
+      ],
+      "id": "53f2d61c-a872-4d56-9e15-499069e11fb5",
+      "name": "Telegram Trigger",
+      "webhookId": "5e6f55b4-30e4-482c-8227-a22b9d72e76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "zXu1gOMKSp1oIYXu",
+          "name": "TextFixer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Fix this text and correct it and just answer with the corrected text i need no extra text : {{ $json.message.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -112,
+        -48
+      ],
+      "id": "3c8b252a-4c14-4bdf-a3c1-62c72337ef41",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        208
+      ],
+      "id": "1e3d7f97-d955-4d30-b508-d071e26d5ede",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "keRtpt9gAIT0IIVh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        -48
+      ],
+      "id": "922a7171-10dc-4606-8b52-a1bb07029414",
+      "name": "Send a text message",
+      "webhookId": "1ff4660f-b496-4aa7-be78-3937659b8308",
+      "credentials": {
+        "telegramApi": {
+          "id": "zXu1gOMKSp1oIYXu",
+          "name": "TextFixer"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "992621b0-970a-4353-843f-c71e10443117",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f13f1ee29681bd43a3955123f5d589eaf3f8f20e395ba70d8005bdec474d0fc4"
+  },
+  "id": "dyEoTIXn8RyXFHwT",
+  "tags": []
+}
