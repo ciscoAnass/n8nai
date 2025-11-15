@@ -1,0 +1,117 @@
+{
+  "name": "Image Transcribe",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Transcribe this image",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "87700c18-7d27-46bb-81eb-4a048d9dad63",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xp7sgVuPrJjw2HH6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        -32
+      ],
+      "id": "7b952c52-38b2-4b04-962b-517cc09cf839",
+      "name": "Telegram Trigger1",
+      "webhookId": "c9bb84bd-2b58-40c6-842c-da70db2bfd12",
+      "credentials": {
+        "telegramApi": {
+          "id": "nMvY8eRZK6jZ13vK",
+          "name": "Image Transcribe"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "1447ff0f-af32-431a-898e-4d50445cc820",
+      "name": "Send a text message",
+      "webhookId": "f3cff86f-a70c-4521-9159-d8f0dfb15138",
+      "credentials": {
+        "telegramApi": {
+          "id": "nMvY8eRZK6jZ13vK",
+          "name": "Image Transcribe"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6376ddf9-affb-4c4f-a080-163919304205",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f13f1ee29681bd43a3955123f5d589eaf3f8f20e395ba70d8005bdec474d0fc4"
+  },
+  "id": "NEadQmuWJOK7rfLw",
+  "tags": []
+}
